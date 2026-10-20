@@ -1,0 +1,2515 @@
+<!doctype html>\n<html lang="zh-TW"><head>
+    <script type="module" src="/@vite/client"></script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>苗栗市晚餐大輪盤 - Miaoli Dinner Lucky Wheel</title>
+    <meta name="description" content="解決晚餐選擇困難症！專為苗栗在地老饕設計的晚餐幸運大輪盤，匯集苗栗市人氣美食、營業狀態即時過濾、真實輪盤物理音效與 Google 地圖一鍵導航。">
+    <meta property="og:title" content="苗栗市晚餐大輪盤 - Miaoli Dinner Lucky Wheel">
+    <meta property="og:description" content="解決晚餐選擇困難症！專為苗栗在地老饕設計的晚餐幸運大輪盤，匯集苗栗市人氣美食、營業狀態即時過濾、真實輪盤物理音效與 Google 地圖一鍵導航。">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;800&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
+    <style>
+      *, *::before, *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --bg-main: #0d0c0a;
+        --card-bg: #161513;
+        --border-color: rgba(255, 255, 255, 0.08);
+        --amber-primary: #f59e0b;
+        --amber-hover: #d97706;
+        --orange-gradient: linear-gradient(135deg, #f59e0b, #ea580c);
+      }
+      body {
+        font-family: 'Plus Jakarta Sans', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background-color: var(--bg-main);
+        color: #f3f4f6;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+        user-select: none;
+      }
+      /* Custom subtle scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.03);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 9999px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.35);
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      button {
+        cursor: pointer;
+        border: none;
+        background: transparent;
+        font-family: inherit;
+        color: inherit;
+      }
+
+      /* Layout */
+      .header-bar {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        background: rgba(13, 12, 10, 0.92);
+        backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border-color);
+        padding: 0.75rem 1rem;
+      }
+      .header-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .brand-lockup {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+      }
+      .brand-icon {
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 0.65rem;
+        background: var(--orange-gradient);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+      }
+      .brand-title {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #fff;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+      }
+      .brand-sub {
+        font-size: 0.65rem;
+        color: #a1a1aa;
+        font-weight: 500;
+      }
+      .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+      .btn-icon {
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 0.65rem;
+        border: 1px solid var(--border-color);
+        background: #1c1a16;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #d4d4d8;
+        transition: all 0.15s ease;
+      }
+      .btn-icon:hover {
+        background: #27241e;
+        color: #fff;
+      }
+      .btn-icon.active {
+        background: rgba(245, 158, 11, 0.15);
+        border-color: rgba(245, 158, 11, 0.4);
+        color: var(--amber-primary);
+      }
+      .btn-pill {
+        padding: 0.45rem 0.85rem;
+        border-radius: 0.65rem;
+        background: var(--orange-gradient);
+        color: #0d0c0a;
+        font-weight: 700;
+        font-size: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        box-shadow: 0 2px 8px rgba(234, 88, 12, 0.25);
+        transition: all 0.15s ease;
+      }
+      .btn-pill:hover {
+        opacity: 0.95;
+        transform: scale(0.98);
+      }
+
+      /* Main container */
+      .main-container {
+        flex: 1;
+        max-width: 1200px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 1.25rem 1rem 2.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+      .hero-section {
+        text-align: center;
+        max-width: 680px;
+        margin: 0 auto;
+      }
+      .badge-kicker {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: rgba(245, 158, 11, 0.12);
+        border: 1px solid rgba(245, 158, 11, 0.25);
+        color: var(--amber-primary);
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        margin-bottom: 0.5rem;
+      }
+      .hero-title {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: #fff;
+        line-height: 1.25;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.35rem;
+      }
+      @media (min-width: 640px) {
+        .hero-title { font-size: 2.25rem; }
+      }
+      .hero-desc {
+        font-size: 0.85rem;
+        color: #a1a1aa;
+        line-height: 1.5;
+      }
+
+      /* Filter Box */
+      .filter-box {
+        background: #141311;
+        border: 1px solid var(--border-color);
+        border-radius: 1rem;
+        padding: 0.85rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      .category-pills {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        overflow-x: auto;
+        padding-bottom: 0.2rem;
+      }
+      .cat-btn {
+        padding: 0.4rem 0.8rem;
+        border-radius: 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        white-space: nowrap;
+        background: #1f1d18;
+        color: #d4d4d8;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.15s ease;
+      }
+      .cat-btn:hover {
+        background: #2a2720;
+        color: #fff;
+      }
+      .cat-btn.active {
+        background: var(--amber-primary);
+        color: #0d0c0a;
+        font-weight: 800;
+        box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25);
+      }
+      .filter-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+        color: #a1a1aa;
+        border-top: 1px solid rgba(255, 255, 255, 0.04);
+        padding-top: 0.5rem;
+      }
+      .toggle-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.35rem 0.65rem;
+        border-radius: 0.5rem;
+        background: #1c1a16;
+        border: 1px solid var(--border-color);
+        color: #d4d4d8;
+        font-size: 0.72rem;
+        font-weight: 500;
+        transition: all 0.15s ease;
+      }
+      .toggle-btn:hover {
+        background: #24221d;
+        color: #fff;
+      }
+      .toggle-btn.active {
+        background: rgba(16, 185, 129, 0.15);
+        border-color: rgba(16, 185, 129, 0.5);
+        color: #34d399;
+      }
+      .toggle-btn.active-amber {
+        background: rgba(245, 158, 11, 0.15);
+        border-color: rgba(245, 158, 11, 0.5);
+        color: #fbbf24;
+      }
+
+      /* Stage Layout */
+      .wheel-stage {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        align-items: center;
+      }
+      @media (min-width: 900px) {
+        .wheel-stage {
+          grid-template-columns: 7fr 5fr;
+        }
+      }
+
+      /* Wheel Container */
+      .wheel-wrapper-outer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+      .wheel-glow {
+        position: absolute;
+        width: 320px;
+        height: 320px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, rgba(234, 88, 12, 0.08) 50%, transparent 70%);
+        filter: blur(25px);
+        pointer-events: none;
+      }
+      .wheel-box {
+        position: relative;
+        width: 330px;
+        height: 330px;
+      }
+      @media (min-width: 480px) {
+        .wheel-box { width: 380px; height: 380px; }
+      }
+      @media (min-width: 640px) {
+        .wheel-box { width: 430px; height: 430px; }
+      }
+      .wheel-canvas {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+        display: block;
+        transform-origin: center center;
+        will-change: transform;
+      }
+      /* Top pointer clacker */
+      .wheel-pointer {
+        position: absolute;
+        top: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 30;
+        width: 36px;
+        height: 46px;
+        filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.8));
+        transform-origin: top center;
+        transition: transform 0.08s ease;
+      }
+      .wheel-pointer.flap {
+        transform: translateX(-50%) rotate(-18deg) scale(1.08);
+      }
+
+      /* Center spin button */
+      .wheel-spin-btn {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 25;
+        width: 5.25rem;
+        height: 5.25rem;
+        border-radius: 50%;
+        background: var(--orange-gradient);
+        border: 3.5px solid #fef08a;
+        box-shadow: 0 0 25px rgba(245, 158, 11, 0.6);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        text-align: center;
+        font-weight: 800;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .wheel-spin-btn:hover:not(:disabled) {
+        transform: translate(-50%, -50%) scale(1.06);
+        box-shadow: 0 0 35px rgba(245, 158, 11, 0.85);
+      }
+      .wheel-spin-btn:active:not(:disabled) {
+        transform: translate(-50%, -50%) scale(0.95);
+      }
+      .wheel-spin-btn:disabled {
+        background: #27272a;
+        border-color: #52525b;
+        color: #71717a;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+      .wheel-spin-btn span {
+        font-size: 0.82rem;
+        line-height: 1.15;
+      }
+      .wheel-spin-btn small {
+        font-size: 0.65rem;
+        color: #fef08a;
+      }
+
+      /* Quick pick button */
+      .quick-pick-btn {
+        margin-top: 1.25rem;
+        padding: 0.5rem 1rem;
+        border-radius: 0.75rem;
+        background: #1c1a16;
+        border: 1px solid var(--border-color);
+        color: #d4d4d8;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: all 0.15s ease;
+      }
+      .quick-pick-btn:hover {
+        background: #24221d;
+        color: #fff;
+      }
+
+      /* Candidate list on right */
+      .roster-card-box {
+        background: #141311;
+        border: 1px solid var(--border-color);
+        border-radius: 1rem;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        max-height: 480px;
+      }
+      .roster-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #fff;
+      }
+      .roster-list {
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        padding-right: 0.25rem;
+      }
+      .roster-item {
+        background: #1c1a16;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 0.75rem;
+        padding: 0.65rem 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .roster-item:hover {
+        background: #26231e;
+        border-color: rgba(245, 158, 11, 0.3);
+      }
+      .item-dot {
+        width: 0.6rem;
+        height: 0.6rem;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .item-info {
+        flex: 1;
+        min-width: 0;
+      }
+      .item-name {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #fff;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .item-meta {
+        font-size: 0.7rem;
+        color: #a1a1aa;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        margin-top: 0.15rem;
+      }
+      .status-pill {
+        font-size: 0.65rem;
+        padding: 0.1rem 0.4rem;
+        border-radius: 9999px;
+        font-weight: 600;
+      }
+      .status-open {
+        background: rgba(16, 185, 129, 0.15);
+        color: #34d399;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+      }
+      .status-closed {
+        background: rgba(244, 63, 94, 0.15);
+        color: #fb7185;
+        border: 1px solid rgba(244, 63, 94, 0.3);
+      }
+      .status-rest {
+        background: rgba(245, 158, 11, 0.15);
+        color: #fbbf24;
+        border: 1px solid rgba(245, 158, 11, 0.3);
+      }
+
+      /* Highlights bottom */
+      .highlights-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        border-top: 1px solid var(--border-color);
+        padding-top: 1.5rem;
+      }
+      @media (min-width: 768px) {
+        .highlights-grid { grid-template-columns: repeat(3, 1fr); }
+      }
+      .highlight-card {
+        background: #141311;
+        border: 1px solid var(--border-color);
+        border-radius: 0.85rem;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+      .highlight-title {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+      .highlight-text {
+        font-size: 0.75rem;
+        color: #a1a1aa;
+        line-height: 1.5;
+      }
+
+      /* Modal & Drawer Backdrop */
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(6px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+      }
+      .modal-backdrop.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .modal-box {
+        background: #181715;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 1.25rem;
+        width: 100%;
+        max-width: 500px;
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.7);
+        overflow: hidden;
+        position: relative;
+        transform: scale(0.95);
+        transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        cursor: default;
+      }
+      .modal-backdrop.show .modal-box {
+        transform: scale(1);
+      }
+      .close-x-btn {
+        position: absolute;
+        top: 0.75rem;
+        right: 0.75rem;
+        z-index: 60;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.65);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #e4e4e7;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+      .close-x-btn:hover {
+        background: rgba(0, 0, 0, 0.95);
+        color: #fff;
+        transform: scale(1.05);
+      }
+      .close-x-btn:active {
+        transform: scale(0.92);
+      }
+      .modal-header-hero {
+        position: relative;
+        padding: 1.5rem 1.25rem 1.25rem;
+        color: #fff;
+      }
+      .modal-kicker {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #fef08a;
+        margin-bottom: 0.35rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+      .modal-title {
+        font-size: 1.5rem;
+        font-weight: 800;
+        line-height: 1.2;
+        padding-right: 2.5rem;
+      }
+      .modal-meta-row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+        font-size: 0.8rem;
+      }
+      .modal-body {
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        max-height: 55vh;
+        overflow-y: auto;
+      }
+      .modal-desc {
+        font-size: 0.82rem;
+        color: #d4d4d8;
+        line-height: 1.55;
+      }
+      .dishes-box {
+        background: #201e19;
+        border: 1px solid var(--border-color);
+        border-radius: 0.75rem;
+        padding: 0.75rem;
+      }
+      .dishes-title {
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--amber-primary);
+        margin-bottom: 0.4rem;
+      }
+      .dishes-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+      }
+      .dish-tag {
+        background: #141311;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 0.4rem;
+        padding: 0.2rem 0.5rem;
+        font-size: 0.72rem;
+        color: #e4e4e7;
+      }
+      .info-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        font-size: 0.78rem;
+        color: #a1a1aa;
+      }
+      .info-row a {
+        color: #fbbf24;
+        text-decoration: underline;
+      }
+      .modal-footer {
+        padding: 1rem 1.25rem;
+        background: #11100e;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+      }
+      @media (min-width: 480px) {
+        .modal-footer {
+          flex-direction: row;
+        }
+      }
+      .btn-nav-primary {
+        flex: 1;
+        height: 2.75rem;
+        border-radius: 0.75rem;
+        background: var(--orange-gradient);
+        color: #fff;
+        font-weight: 800;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.45rem;
+        box-shadow: 0 4px 14px rgba(234, 88, 12, 0.3);
+      }
+      .btn-nav-primary:hover {
+        opacity: 0.95;
+      }
+      .btn-modal-sec {
+        height: 2.75rem;
+        padding: 0 0.85rem;
+        border-radius: 0.75rem;
+        background: #24221c;
+        border: 1px solid var(--border-color);
+        color: #d4d4d8;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+      }
+      .btn-modal-sec:hover {
+        background: #2e2b24;
+        color: #fff;
+      }
+
+      /* Drawer (Right slide) */
+      .drawer-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 50;
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(4px);
+        display: flex;
+        justify-content: flex-end;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+      }
+      .drawer-backdrop.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .drawer-box {
+        background: #161513;
+        border-left: 1px solid var(--border-color);
+        width: 100%;
+        max-width: 420px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.7);
+        transform: translateX(100%);
+        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        cursor: default;
+      }
+      .drawer-backdrop.show .drawer-box {
+        transform: translateX(0);
+      }
+      .drawer-header {
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .drawer-title {
+        font-size: 1rem;
+        font-weight: 800;
+        color: #fff;
+      }
+      .drawer-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+      }
+
+      /* Form controls */
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+      .form-label {
+        font-size: 0.75rem;
+        color: #d4d4d8;
+        font-weight: 600;
+      }
+      .form-input, .form-select {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        background: #201e19;
+        border: 1px solid var(--border-color);
+        border-radius: 0.65rem;
+        color: #fff;
+        font-size: 0.8rem;
+        font-family: inherit;
+      }
+      .form-input:focus, .form-select:focus {
+        outline: none;
+        border-color: var(--amber-primary);
+      }
+
+      /* Footer */
+      .footer-bar {
+        text-align: center;
+        font-size: 0.72rem;
+        color: #71717a;
+        padding: 1.25rem;
+        border-top: 1px solid var(--border-color);
+      }
+    </style>
+  <script src="/_aistudio-iframe.js?v=6634132a"></script><script src="https://cdn.jsdelivr.net/npm/html2canvas-pro@2.0.4"></script><style>.aistudio-hover-highlight { box-shadow: inset 0 0 0 0.5px white, inset 0 0 0 1.5px rgba(128,128,128,0.6) !important; }.aistudio-active-highlight { outline: 2px solid #87a9ff !important; outline-offset: -2px !important; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.3), inset 0 0 0 0.5px rgba(0,0,0,0.3) !important; }.aistudio-generating-blur { filter: blur(5px) grayscale(100%) brightness(28%) !important; transition: filter 0.3s ease; }#aistudio-focus-mode-tag { position: absolute; display: none; align-items: center; gap: 4px; background: #87a9ff; border-radius: 12px; z-index: 10000; padding: 8px; color: #32302c; font-family: Inter, sans-serif; font-size: 14px; font-style: normal; font-weight: 500; line-height: 21px; pointer-events: none; }#aistudio-hover-mode-tag { position: absolute; display: none; align-items: center; gap: 4px; background: rgba(128,128,128,0.6); border-radius: 12px; z-index: 10000; padding: 8px; color: white; font-family: Inter, sans-serif; font-size: 14px; font-style: normal; font-weight: 500; line-height: 21px; pointer-events: none; }.aistudio-img-icon { display: none; vertical-align: middle; pointer-events: auto; cursor: pointer; }.aistudio-img-icon.visible { display: inline-flex; }#aistudio-focus-mode-tag .aistudio-img-icon { position: relative; width: 26px; height: 26px; background: #32302c; border-radius: 6px; margin: -4px -4px -4px 0; }#aistudio-focus-mode-tag .aistudio-img-icon::before { content: ""; position: absolute; top: 4px; left: 4px; width: 18px; height: 18px; background-color: white; -webkit-mask-image: url("https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/edit_fix_auto/default/24px.svg"); -webkit-mask-size: contain; -webkit-mask-repeat: no-repeat; mask-image: url("https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/edit_fix_auto/default/24px.svg"); mask-size: contain; mask-repeat: no-repeat; }#aistudio-hover-mode-tag .aistudio-img-icon { position: relative; width: 18px; height: 18px; margin-left: 4px; }#aistudio-hover-mode-tag .aistudio-img-icon::before { content: ""; position: absolute; top: 0; left: 0; width: 18px; height: 18px; background-color: white; -webkit-mask-image: url("https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/edit_fix_auto/default/24px.svg"); -webkit-mask-size: contain; -webkit-mask-repeat: no-repeat; mask-image: url("https://fonts.gstatic.com/s/i/short-term/release/googlesymbols/edit_fix_auto/default/24px.svg"); mask-size: contain; mask-repeat: no-repeat; }#aistudio-focus-mode-tag .aistudio-img-icon:hover, #aistudio-hover-mode-tag .aistudio-img-icon:hover { background: #424242 !important; }#aistudio-focus-mode-tag .aistudio-img-icon:active, #aistudio-hover-mode-tag .aistudio-img-icon:active { background: #393f51 !important; }</style></head>
+  <body>
+    <!-- Header -->
+    <header class="header-bar">
+      <div class="header-content">
+        <div class="brand-lockup">
+          <div class="brand-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon>
+            </svg>
+          </div>
+          <div>
+            <h1 class="brand-title">苗栗市晚餐大輪盤</h1>
+            <p class="brand-sub">Miaoli Dinner Lucky Wheel</p>
+          </div>
+        </div>
+
+        <div class="nav-actions">
+          <!-- Audio Toggle -->
+          <button id="soundToggleBtn" class="btn-icon active" title="音效切換" aria-label="切換音效">
+            <svg id="soundOnIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: block;">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+            <svg id="soundOffIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <line x1="23" y1="9" x2="17" y2="15"></line>
+              <line x1="17" y1="9" x2="23" y2="15"></line>
+            </svg>
+          </button>
+
+          <!-- History button -->
+          <button id="historyBtn" class="btn-icon" title="近 7 天抽獎紀錄" aria-label="查看抽獎紀錄">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 3v5h5"></path>
+              <path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"></path>
+              <path d="M12 7v5l4 2"></path>
+            </svg>
+          </button>
+
+          <!-- Single File Download -->
+          <button id="downloadFileBtn" class="btn-icon" title="下載單檔 index.html (隨處離線執行)" aria-label="下載單檔">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+          </button>
+
+          <!-- Manage Pool Drawer -->
+          <button id="openPoolBtn" class="btn-pill" aria-label="店家名單管理">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+            <span>店家管理</span>
+            <span id="activeCountBadge" style="background: rgba(0,0,0,0.25); color: #fff; padding: 0.05rem 0.35rem; border-radius: 9999px; font-size: 0.7rem; font-family: monospace;">10</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-container">
+      <!-- Hero -->
+      <section class="hero-section">
+        <div class="badge-kicker">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2l2.4 7.4h7.6l-6 4.6 2.3 7.2-6.3-4.6-6.3 4.6 2.3-7.2-6-4.6h7.6z"></path>
+          </svg>
+          <span>告別晚餐選擇困難 · 苗栗在地美食指南</span>
+        </div>
+        <h2 class="hero-title">今天晚餐吃什麼？苗栗在地大輪盤</h2>
+        <p class="hero-desc">
+          精選苗栗市高分熱門晚餐、隱藏版老店客家小吃，物理減速抽籤，附 Google 地圖導航與電話預約。
+        </p>
+      </section>
+
+      <!-- Filter Controls -->
+      <section class="filter-box">
+        <div class="category-pills" id="categoryPills"><button class="cat-btn active">全部</button><button class="cat-btn ">異國料理</button><button class="cat-btn ">定食 / 日式</button><button class="cat-btn ">台式家常</button><button class="cat-btn ">義式料理</button><button class="cat-btn ">平價小吃</button></div>
+
+        <div class="filter-row">
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button id="openNowFilterBtn" class="toggle-btn" aria-label="僅顯示營業中">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <span>僅顯示營業中</span>
+            </button>
+
+            <button id="antiRepeatFilterBtn" class="toggle-btn" aria-label="防重複開關">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+              <span>防重複 (避開7天內)</span>
+            </button>
+          </div>
+
+          <div style="font-family: monospace; font-size: 0.72rem; color: #a1a1aa;">
+            輪盤候選：<strong id="matchCountNum" style="color: var(--amber-primary);">10</strong> / <span id="totalCountNum">10</span> 家
+          </div>
+        </div>
+      </section>
+
+      <!-- Center Stage -->
+      <section class="wheel-stage">
+        <!-- Wheel Area -->
+        <div class="wheel-wrapper-outer">
+          <div class="wheel-glow"></div>
+
+          <div class="wheel-box">
+            <!-- Top Pointer with ratchet flap -->
+            <div id="wheelPointer" class="wheel-pointer">
+              <svg width="36" height="46" viewBox="0 0 42 52" fill="none">
+                <path d="M21 50L6 14C3.5 8.5 7.5 2 13.5 2H28.5C34.5 2 38.5 8.5 36 14L21 50Z" fill="url(#pGold)" stroke="#FFF" stroke-width="2"></path>
+                <circle cx="21" cy="15" r="5" fill="#EF4444" stroke="#FFF" stroke-width="1.5"></circle>
+                <defs>
+                  <linearGradient id="pGold" x1="6" y1="2" x2="36" y2="50" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#FDE047"></stop>
+                    <stop offset="0.5" stop-color="#F59E0B"></stop>
+                    <stop offset="1" stop-color="#B45309"></stop>
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+
+            <!-- Canvas Wheel -->
+            <canvas id="wheelCanvas" class="wheel-canvas" width="800" height="800"></canvas>
+
+            <!-- Center GO Button -->
+            <button id="spinBtn" class="wheel-spin-btn" aria-label="今天吃什麼？啟動轉盤">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 2px;">
+                <path d="M18 2v6h-4M6 22v-6h4"></path>
+                <path d="m14 8 7-7-7 7M10 16l-7 7 7-7"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <span>今天吃</span>
+              <small>什麼？</small>
+            </button>
+          </div>
+
+          <!-- Quick pick button -->
+          <button id="quickPickBtn" class="quick-pick-btn" title="免等待隨機立即推薦">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="16 3 21 3 21 8"></polyline>
+              <line x1="4" y1="20" x2="21" y2="3"></line>
+              <polyline points="21 16 21 21 16 21"></polyline>
+              <line x1="15" y1="15" x2="21" y2="21"></line>
+              <line x1="4" y1="4" x2="9" y2="9"></line>
+            </svg>
+            <span>不想等旋轉？點此直接抽一家</span>
+          </button>
+        </div>
+
+        <!-- Candidate Roster Column -->
+        <div class="roster-card-box">
+          <div class="roster-header">
+            <span>目前候選推薦清單</span>
+            <button id="editPoolLinkBtn" style="color: var(--amber-primary); font-size: 0.72rem; text-decoration: underline;">
+              管理名單 / 新增
+            </button>
+          </div>
+
+          <div id="rosterListContainer" class="roster-list"><div class="roster-item">
+              <div style="display: flex; align-items: center; gap: 0.6rem; flex: 1; min-width: 0;">
+                <span class="item-dot" style="background-color: #E11D48;"></span>
+                <div class="item-info">
+                  <div class="item-name">猫狸村Miaoli Village</div>
+                  <div class="item-meta">
+                    <span>異國料理</span>
+                    <span>·</span>
+                    <span style="color: #f59e0b; font-weight: bold; font-family: monospace;">★ 4.7</span>
+                    <span>·</span>
+                    <span class="status-pill status-open">營業中</span>
+                  </div>
+                </div>
+              </div>
+              <div style="font-size: 0.72rem; color: #a1a1aa; flex-shrink: 0;">詳情 →</div>
+            </div><div class="roster-item">
+              <div style="display: flex; align-items: center; gap: 0.6rem; flex: 1; min-width: 0;">
+                <span class="item-dot" style="background-color: #D97706;"></span>
+                <div class="item-info">
+                  <div class="item-name">米盛食堂</div>
+                  <div class="item-meta">
+                    <span>定食 / 日式</span>
+                    <span>·</span>
+                    <span style="color: #f59e0b; font-weight: bold; font-family: monospace;">★ 4.7</span>
+                    <span>·</span>
+                    <span class="status-pill status-open">營業中</span>
+                  </div>
+                </div>
+              </div>
+              <div style="font-size: 0.72rem; color: #a1a1aa; flex-shrink: 0;">詳情 →</div>
+            </div><div class="roster-item">
+              <div style="display: flex; align-items: center; gap: 0.6rem; flex: 1; min-width: 0;">
+                <span class="item-dot" style="background-color: #059669;"></span>
+                <div class="item-info">
+                  <div class="item-name">氛飨食堂</div>
+                  <div class="item-meta">
+                    <span>台式家常</span>
+                    <span>·</span>
+                    <span style="color: #f59e0b; font-weight: bold; font-family: monospace;">★ 4.5</span>
+                    <span>·</span>
+                    <span class="status-pill status-open">營業中</span>
+                  </div>
+                </div>
+              </div>
+              <div style="font-size: 0.72rem; color: #a1a1aa; flex-shrink: 0;">詳情 →</div>
+            </div><div class="roster-item">
+              <div style="display: flex; align-items: center; gap: 0.6rem; flex: 1; min-width: 0;">
+                <span class="item-dot" style="background-color: #0284C7;"></span>
+                <div class="item-info">
+                  <div class="item-name">愛希斯義式餐廳</div>
+                  <div class="item-meta">
+                    <span>義式料理</span>
+                    <span>·</span>
+                    <span style="color: #f59e0b; font-weight: bold; font-family: monospace;">★ 4.9</span>
+                    <span>·</span>
+                    <span class="status-pill status-open">營業中</span>
+                  </div>
+                </div>
+              </div>
+              <div style="font-size: 0.72rem; color: #a1a1aa; flex-shrink: 0;">詳情 →</div>
+            </div><div class="roster-item">
+              <div style="display: flex; align-items: center; gap: 0.6rem; flex: 1; min-width: 0;">
+                <span class="item-dot" style="background-color: #8B5CF6;"></span>
+                <div class="item-info">
+                  <div class="item-name">舒喜食堂</div>
+                  <div class="item-meta">
+                    <span>平價小吃</span>
+                    <span>·</span>
+                    <span style="color: #f59e0b; font-weight: bold; font-family: monospace;">★ 4.8</span>
+                    <span>·</span>
+                    <span class="status-pill status-open">營業中</span>
+                  </div>
+                </div>
+              </div>
+              <div style="font-size: 0.72rem; color: #a1a1aa; flex-shrink: 0;">詳情 →</div>
+            </div><div class="roster-item">
+              <div style="display: flex; align-items: center; gap: 0.6rem; flex: 1; min-width: 0;">
+                <span class="item-dot" style="background-color: #EA580C;"></span>
+                <div class="item-info">
+                  <div class="item-name">江技舊記專業餛飩</div>
+                  <div class="item-meta">
+                    <span>平價小吃</span>
+                    <span>·</span>
+                    <span style="color: #f59e0b; font-weight: bold; font-family: monospace;">★ 4.3</span>
+                    <span>·</span>
+                    <span class="status-pill status-open">營業中</span>
+                  </div>
+                </div>
+              </div>
+              <div style="font-size: 0.72rem; color: #a1a1aa; flex-shrink: 0;">詳情 →</div>
+            </div><div class="roster-item">
+              <div style="display: flex; align-items: center; gap: 0.6rem; flex: 1; min-width: 0;">
+                <span class="item-dot" style="background-color: #10B981;"></span>
+                <div class="item-info">
+                  <div class="item-name">阿蘭姊小吃店</div>
+                  <div class="item-meta">
+                    <span>平價小吃</span>
+                    <span>·</span>
+                    <span style="color: #f59e0b; font-weight: bold; font-family: monospace;">★ 4.4</span>
+                    <span>·</span>
+                    <span class="status-pill status-open">營業中</span>
+                  </div>
+                </div>
+              </div>
+              <div style="font-size: 0.72rem; color: #a1a1aa; flex-shrink: 0;">詳情 →</div>
+            </div><div class="roster-item">
+              <div style="display: flex; align-items: center; gap: 0.6rem; flex: 1; min-width: 0;">
+                <span class="item-dot" style="background-color: #BE185D;"></span>
+                <div class="item-info">
+                  <div class="item-name">田新牛家庄</div>
+                  <div class="item-meta">
+                    <span>台式家常</span>
+                    <span>·</span>
+                    <span style="color: #f59e0b; font-weight: bold; font-family: monospace;">★ 4.5</span>
+                    <span>·</span>
+                    <span class="status-pill status-open">營業中</span>
+                  </div>
+                </div>
+              </div>
+              <div style="font-size: 0.72rem; color: #a1a1aa; flex-shrink: 0;">詳情 →</div>
+            </div><div class="roster-item">
+              <div style="display: flex; align-items: center; gap: 0.6rem; flex: 1; min-width: 0;">
+                <span class="item-dot" style="background-color: #3B82F6;"></span>
+                <div class="item-info">
+                  <div class="item-name">隨心園冰菓室/熱食</div>
+                  <div class="item-meta">
+                    <span>平價小吃</span>
+                    <span>·</span>
+                    <span style="color: #f59e0b; font-weight: bold; font-family: monospace;">★ 4.6</span>
+                    <span>·</span>
+                    <span class="status-pill status-open">營業中</span>
+                  </div>
+                </div>
+              </div>
+              <div style="font-size: 0.72rem; color: #a1a1aa; flex-shrink: 0;">詳情 →</div>
+            </div><div class="roster-item">
+              <div style="display: flex; align-items: center; gap: 0.6rem; flex: 1; min-width: 0;">
+                <span class="item-dot" style="background-color: #6366F1;"></span>
+                <div class="item-info">
+                  <div class="item-name">第一佳水晶餃</div>
+                  <div class="item-meta">
+                    <span>平價小吃</span>
+                    <span>·</span>
+                    <span style="color: #f59e0b; font-weight: bold; font-family: monospace;">★ 4.5</span>
+                    <span>·</span>
+                    <span class="status-pill status-open">營業中</span>
+                  </div>
+                </div>
+              </div>
+              <div style="font-size: 0.72rem; color: #a1a1aa; flex-shrink: 0;">詳情 →</div>
+            </div></div>
+        </div>
+      </section>
+
+      <!-- Highlights Footer Strip -->
+      <section class="highlights-grid">
+        <div class="highlight-card">
+          <div class="highlight-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+            <span>苗栗在地經典精選</span>
+          </div>
+          <p class="highlight-text">
+            收錄猫狸村、米盛食堂、氛飨食堂、愛希斯義式、舒喜食堂與七十年江技舊記水晶餃等在地知名排隊老店。
+          </p>
+        </div>
+
+        <div class="highlight-card">
+          <div class="highlight-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>即時公休時段判讀</span>
+          </div>
+          <p class="highlight-text">
+            自動即時判斷每家餐廳的每週公休日與午晚餐營業時段，支援一鍵過濾「僅顯示營業中」，避免撲空。
+          </p>
+        </div>
+
+        <div class="highlight-card">
+          <div class="highlight-title">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <span>一鍵地圖導航路線</span>
+          </div>
+          <p class="highlight-text">
+            中獎後自動串接 Google Maps 官方路線規劃與一鍵電話撥打，3.5 秒決定今晚晚餐，出發不拖延！
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-bar">
+      <span>© 苗栗市晚餐大輪盤 · 單一檔案極速離線版 · 隨點隨用</span>
+    </footer>
+
+    <!-- Result / Details Modal -->
+    <div id="resultModalBackdrop" class="modal-backdrop">
+      <div id="resultModalBox" class="modal-box" role="dialog" aria-modal="true">
+        <!-- Close Button (High Z-Index, 40x40 touch target) -->
+        <button id="closeModalBtn" type="button" class="close-x-btn" title="關閉視窗 (Esc)" aria-label="關閉視窗">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+
+        <div id="modalHeroBanner" class="modal-header-hero">
+          <div class="modal-kicker">
+            <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#f59e0b;"></span>
+            <span id="modalKickerText">苗栗今晚首選出爐</span>
+            <span>·</span>
+            <span id="modalCategoryBadge">異國料理</span>
+          </div>
+          <h3 id="modalRestaurantName" class="modal-title">餐厅名字</h3>
+          <div class="modal-meta-row">
+            <span style="color: #f59e0b; font-weight: bold; font-family: monospace;" id="modalRatingText">★ 4.7</span>
+            <span style="color: #71717a;">·</span>
+            <span id="modalStatusBadge" class="status-pill status-open">營業中</span>
+          </div>
+        </div>
+
+        <div class="modal-body">
+          <div id="modalAlertBox" style="display: none; padding: 0.6rem 0.75rem; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 0.65rem; color: #fde68a; font-size: 0.75rem;">
+            預計尚未營業，出發前建議先致電確認喔！
+          </div>
+
+          <p id="modalDescription" class="modal-desc"></p>
+
+          <div class="dishes-box">
+            <div class="dishes-title">老饕推薦必點招牌</div>
+            <div id="modalDishesContainer" class="dishes-list"></div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 0.4rem; padding-top: 0.25rem;">
+            <div class="info-row">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0; margin-top: 2px;">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              <span id="modalAddressText" style="color: #e4e4e7;"></span>
+            </div>
+
+            <div class="info-row">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0; margin-top: 2px;">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+              <div>
+                <a id="modalPhoneLink" href="#"></a>
+                <span style="font-size: 0.7rem; color: #71717a; margin-left: 0.35rem;">(點擊撥打)</span>
+              </div>
+            </div>
+
+            <div class="info-row">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0; margin-top: 2px;">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <span id="modalHoursText"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <a id="modalNavBtn" href="#" target="_blank" rel="noopener noreferrer" class="btn-nav-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+            </svg>
+            <span>開啟 Google 地圖導航</span>
+          </a>
+
+          <div style="display: flex; gap: 0.4rem;">
+            <button id="modalSpinAgainBtn" type="button" class="btn-modal-sec">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                <path d="M3 3v5h5"></path>
+              </svg>
+              <span>再抽一次</span>
+            </button>
+
+            <button id="modalRecordBtn" type="button" class="btn-modal-sec">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+              <span id="modalRecordText">記錄今晚</span>
+            </button>
+
+            <!-- Bottom explicit close button -->
+            <button id="modalBottomCloseBtn" type="button" class="btn-modal-sec">
+              <span>關閉</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Restaurant Pool Drawer -->
+    <div id="poolDrawerBackdrop" class="drawer-backdrop">
+      <div id="poolDrawerBox" class="drawer-box" role="dialog" aria-modal="true">
+        <div class="drawer-header">
+          <div>
+            <div class="drawer-title">苗栗晚餐店家庫</div>
+            <div style="font-size: 0.72rem; color: #a1a1aa; margin-top: 2px;">
+              勾選的店家將即時反映在大輪盤扇區中
+            </div>
+          </div>
+          <button id="closePoolDrawerBtn" type="button" class="btn-icon" aria-label="關閉店家庫">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <div style="padding: 0.75rem 1rem; background: #131210; border-bottom: 1px solid var(--border-color); display: flex; gap: 0.5rem;">
+          <button id="openAddModalBtn" type="button" class="btn-pill" style="flex: 1; justify-content: center;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>新增私房店家</span>
+          </button>
+          <button id="resetDefaultsBtn" type="button" class="btn-modal-sec" style="font-size: 0.72rem;">
+            還原預設
+          </button>
+        </div>
+
+        <div id="poolListContainer" class="drawer-body">
+          <!-- Pool items -->
+        </div>
+      </div>
+    </div>
+
+    <!-- History Drawer -->
+    <div id="historyDrawerBackdrop" class="drawer-backdrop">
+      <div id="historyDrawerBox" class="drawer-box" role="dialog" aria-modal="true">
+        <div class="drawer-header">
+          <div>
+            <div class="drawer-title">近 7 天抽獎歷史</div>
+            <div style="font-size: 0.72rem; color: #a1a1aa; margin-top: 2px;">
+              開啟防重複時將自動排除這些餐廳
+            </div>
+          </div>
+          <button id="closeHistoryDrawerBtn" type="button" class="btn-icon" aria-label="關閉歷史紀錄">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <div id="historyActionBar" style="padding: 0.65rem 1rem; background: #131210; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 0.72rem; color: #a1a1aa;">歷史紀錄清單</span>
+          <button id="clearHistoryBtn" type="button" style="color: #fb7185; font-size: 0.72rem; font-weight: 600;">清空紀錄</button>
+        </div>
+
+        <div id="historyListContainer" class="drawer-body">
+          <!-- History items -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Custom Restaurant Modal -->
+    <div id="addModalBackdrop" class="modal-backdrop">
+      <div id="addModalBox" class="modal-box" style="padding: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; margin-bottom: 1rem;">
+          <h3 style="font-size: 1rem; font-weight: 800; color: #fff;">新增苗栗私房店家</h3>
+          <button id="closeAddModalBtn" type="button" class="btn-icon" aria-label="關閉新增視窗">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <form id="addRestaurantForm" style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <div class="form-group">
+            <label class="form-label">餐廳名稱 *</label>
+            <input id="addNameInput" class="form-input" required="" placeholder="例如：南苗排骨酥、光復路老店牛肉麵">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+            <div class="form-group">
+              <label class="form-label">料理類別</label>
+              <select id="addCategorySelect" class="form-select">
+                <option value="平價小吃">平價小吃</option>
+                <option value="台式家常">台式家常</option>
+                <option value="定食 / 日式">定食 / 日式</option>
+                <option value="義式料理">義式料理</option>
+                <option value="異國料理">異國料理</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">評分 (1.0 ~ 5.0)</label>
+              <input id="addRatingInput" type="number" step="0.1" min="1.0" max="5.0" value="4.6" class="form-input">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">地址</label>
+            <input id="addAddressInput" class="form-input" value="苗栗縣苗栗市">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">電話 (選填)</label>
+            <input id="addPhoneInput" class="form-input" placeholder="+886 37 123 456">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">招牌料理 (逗號分隔)</label>
+            <input id="addDishesInput" class="form-input" placeholder="例如：牛肉炒麵, 手工餛飩, 鮮炸豆腐">
+          </div>
+
+          <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem;">
+            <button id="cancelAddModalBtn" type="button" class="btn-modal-sec">取消</button>
+            <button type="submit" class="btn-pill" style="font-size: 0.8rem; padding: 0.5rem 1rem;">加入輪盤</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Integrated Script Logic -->
+    <script>
+      (function() {
+        // --- 1. Master Preset Restaurants Data ---
+        const PRESET_MIAOLI_RESTAURANTS = [
+          {
+            id: 'r01',
+            name: '猫狸村Miaoli Village',
+            category: '異國料理',
+            address: '苗栗縣苗栗市建功里府前路43號',
+            phone: '+886 37 370 789',
+            rating: 4.7,
+            reviewsCount: 920,
+            map_url: 'https://maps.google.com/?cid=4651487946165519426',
+            place_id: 'ChIJU33dfcutaTQRQgQ1dKRnjUA',
+            opening_hours: {
+              days: [0, 1, 2, 4, 5, 6], // 週三公休 (3 is Wed)
+              lunch: { start: '11:30', end: '14:30' },
+              dinner: { start: '17:00', end: '20:30' },
+              restDayNote: '每週三公休'
+            },
+            description: '苗栗超人氣義法異國手作料理餐廳，招牌水波蛋松露義大利麵與貓狸手工甜點。',
+            signatureDishes: ['松露野菇水波蛋燉飯', '主廚香煎嫩鴨胸', '手作貓狸特色甜點'],
+            color: '#E11D48'
+          },
+          {
+            id: 'r02',
+            name: '米盛食堂',
+            category: '定食 / 日式',
+            address: '苗栗縣苗栗市建功里府前路29號1樓',
+            phone: '+886 37 369 889',
+            rating: 4.7,
+            reviewsCount: 650,
+            map_url: 'https://maps.google.com/?cid=12644248405072049027',
+            place_id: 'ChIJKRVOcECtaTQRg3llpbthq5M',
+            opening_hours: {
+              days: [0, 1, 2, 4, 5, 6],
+              lunch: { start: '11:00', end: '14:00' },
+              dinner: { start: '17:00', end: '20:00' },
+              restDayNote: '每週三公休'
+            },
+            description: '溫馨日式家庭定食食堂，炸牡蠣定食、照燒雞腿與唐揚雞份量實在、白飯味增湯極佳。',
+            signatureDishes: ['黃金唐揚雞定食', '廣島炸牡蠣定食', '日式茶碗蒸'],
+            color: '#D97706'
+          },
+          {
+            id: 'r03',
+            name: '氛飨食堂',
+            category: '台式家常',
+            address: '苗栗縣苗栗市福麗里和平路48號',
+            phone: '+886 37 360 882',
+            rating: 4.5,
+            reviewsCount: 410,
+            map_url: 'https://maps.google.com/?cid=1033069152436151899',
+            place_id: 'ChIJ9esXRaitaTQRq79tVXx-jQ0',
+            opening_hours: {
+              days: [1, 2, 3, 4, 5, 6],
+              lunch: { start: '11:00', end: '14:00' },
+              dinner: { start: '17:00', end: '20:00' },
+              restDayNote: '每週日公休'
+            },
+            description: '少油少鹽的健康台式家常簡餐，每日鮮魚定食、蔥燒排骨深受家庭與上班族推崇。',
+            signatureDishes: ['香煎現撈鮮魚定食', '特製蔥燒大排骨', '元氣私房慢燉例湯'],
+            color: '#059669'
+          },
+          {
+            id: 'r04',
+            name: '愛希斯義式餐廳',
+            category: '義式料理',
+            address: '苗栗縣苗栗市北安街178號',
+            phone: '+886 37 366 230',
+            rating: 4.9,
+            reviewsCount: 580,
+            map_url: 'https://maps.google.com/?cid=16908953185368545881',
+            place_id: 'ChIJj2IRVYqtaTQRWTpGylOFcOo',
+            opening_hours: {
+              days: [0, 2, 3, 4, 5, 6],
+              lunch: { start: '11:30', end: '14:30' },
+              dinner: { start: '17:30', end: '21:00' },
+              restDayNote: '每週一公休'
+            },
+            description: '苗栗在地評分高達 4.9 星的義式料理代表，濃郁白酒蒜香義大利麵與窯烤披薩。',
+            signatureDishes: ['蒜香白酒鮮蛤義大利麵', '青醬炙烤大蝦燉飯', '主廚提拉米蘇'],
+            color: '#0284C7'
+          },
+          {
+            id: 'r05',
+            name: '舒喜食堂',
+            category: '平價小吃',
+            address: '苗栗縣苗栗市青苗里至公路66號',
+            phone: '+886 37 353 388',
+            rating: 4.8,
+            reviewsCount: 390,
+            map_url: 'https://maps.google.com/?cid=7611681944810842865',
+            place_id: 'ChIJAQqA4gSraTQR8f49rpnDfGk',
+            opening_hours: {
+              days: [1, 2, 3, 4, 5, 6],
+              lunch: { start: '11:00', end: '14:00' },
+              dinner: { start: '16:30', end: '20:00' },
+              restDayNote: '每週日公休'
+            },
+            description: '青苗里人氣平價小吃簡餐，用心熬煮肉燥與香濃乾麵，銅板價格大份量享受。',
+            signatureDishes: ['舒喜招牌古早味乾麵', '手工特製滷肉飯', '手作脆貢丸湯'],
+            color: '#8B5CF6'
+          },
+          {
+            id: 'r06',
+            name: '江技舊記專業餛飩',
+            category: '平價小吃',
+            address: '苗栗縣苗栗市新苗里新苗街88號',
+            phone: '+886 37 327 803',
+            rating: 4.3,
+            reviewsCount: 3600,
+            map_url: 'https://maps.google.com/?q=江技舊記專業餛飩+苗栗市新苗街88號',
+            place_id: 'ChIJ_jiangji_miaoli',
+            opening_hours: {
+              days: [0, 1, 2, 3, 4, 5, 6],
+              lunch: { start: '10:30', end: '14:00' },
+              dinner: { start: '16:00', end: '20:00' },
+              restDayNote: '每日營業'
+            },
+            description: '七十年苗栗知名老店，手工現包扎實餛飩肉餡鮮甜，搭配特製辣醬沾水晶餃是老饕標配。',
+            signatureDishes: ['餛飩貢丸雙拼湯', '現蒸客家水晶餃', '招牌熱乾麵'],
+            color: '#EA580C'
+          },
+          {
+            id: 'r07',
+            name: '阿蘭姊小吃店',
+            category: '平價小吃',
+            address: '苗栗縣苗栗市新苗里新苗街61巷49號',
+            phone: '+886 37 321 677',
+            rating: 4.4,
+            reviewsCount: 2100,
+            map_url: 'https://maps.google.com/?q=阿蘭姊小吃店+苗栗市新苗街61巷49號',
+            place_id: 'ChIJ_alan_miaoli',
+            opening_hours: {
+              days: [0, 1, 2, 3, 4, 5, 6],
+              lunch: { start: '07:00', end: '13:30' },
+              dinner: { start: '16:30', end: '19:30' },
+              restDayNote: '每日營業'
+            },
+            description: '隱身新苗巷弄中的傳奇客家小吃，晶瑩剔透手工水晶餃淋上韭菜辣醬，銷魂回味。',
+            signatureDishes: ['客家炒麵米粉', '招牌手工水晶餃湯', '特調韭菜醬汁'],
+            color: '#10B981'
+          },
+          {
+            id: 'r08',
+            name: '田新牛家庄',
+            category: '台式家常',
+            address: '苗栗縣苗栗市光復路55號',
+            phone: '+886 37 327 759',
+            rating: 4.5,
+            reviewsCount: 1500,
+            map_url: 'https://maps.google.com/?q=田新牛家庄+苗栗市光復路55號',
+            place_id: 'ChIJ_tianxin_miaoli',
+            opening_hours: {
+              days: [0, 2, 3, 4, 5, 6],
+              lunch: { start: '11:00', end: '14:00' },
+              dinner: { start: '17:00', end: '20:30' },
+              restDayNote: '每週一公休'
+            },
+            description: '在地全牛料理傳奇，快炒牛雜、蔥爆牛肉鑊氣十足，冬天喝上一碗鮮甜九層塔牛雜湯超滿足。',
+            signatureDishes: ['客家沙茶牛肉炒麵', '鮮嫩全牛牛雜湯', '蔥爆嫩牛柳'],
+            color: '#BE185D'
+          },
+          {
+            id: 'r09',
+            name: '隨心園冰菓室/熱食',
+            category: '平價小吃',
+            address: '苗栗縣苗栗市日光街130號',
+            phone: '+886 37 333 733',
+            rating: 4.6,
+            reviewsCount: 780,
+            map_url: 'https://maps.google.com/?q=隨心園冰菓室+苗栗市日光街130號',
+            place_id: 'ChIJ_suixinyuan_miaoli',
+            opening_hours: {
+              days: [0, 1, 2, 3, 4, 5, 6],
+              lunch: { start: '11:00', end: '14:00' },
+              dinner: { start: '16:30', end: '21:00' },
+              restDayNote: '每日營業'
+            },
+            description: '苗栗在地人的童年回憶，除了手工雪花冰，晚間暖呼呼的日式鍋燒烏龍麵與炸豬排更是學生族最愛。',
+            signatureDishes: ['海鮮總匯鍋燒意麵', '香酥厚切豬排飯', '古早味牛奶布丁冰'],
+            color: '#3B82F6'
+          },
+          {
+            id: 'r10',
+            name: '第一佳水晶餃',
+            category: '平價小吃',
+            address: '苗栗縣苗栗市中正路98號',
+            phone: '+886 37 360 998',
+            rating: 4.5,
+            reviewsCount: 890,
+            map_url: 'https://maps.google.com/?q=第一佳水晶餃+苗栗市中正路98號',
+            place_id: 'ChIJ_diyijia_miaoli',
+            opening_hours: {
+              days: [1, 2, 3, 4, 5, 6],
+              lunch: { start: '10:30', end: '14:00' },
+              dinner: { start: '16:30', end: '19:30' },
+              restDayNote: '每週日公休'
+            },
+            description: '客家傳統三角水晶餃名店，外皮Q彈有嚼勁，絞肉內餡拌入油蔥酥，香氣四溢。',
+            signatureDishes: ['乾拌客家水晶餃', '傳統客家米粉', '粉腸豬血湯'],
+            color: '#6366F1'
+          }
+        ];
+
+        const CATEGORIES = ['全部', '異國料理', '定食 / 日式', '台式家常', '義式料理', '平價小吃'];
+        const STORAGE_CUSTOM_KEY = 'miaoli_single_custom_restaurants';
+        const STORAGE_HISTORY_KEY = 'miaoli_single_spin_history';
+        const STORAGE_DISABLED_KEY = 'miaoli_single_disabled_ids';
+        const STORAGE_MUTED_KEY = 'miaoli_single_muted';
+
+        // --- 2. Web Audio Synthesizer ---
+        class WebAudioSFX {
+          constructor() {
+            this.ctx = null;
+            this.isMuted = localStorage.getItem(STORAGE_MUTED_KEY) === 'true';
+          }
+          init() {
+            if (!this.ctx && typeof window !== 'undefined') {
+              const AudioCtx = window.AudioContext || window.webkitAudioContext;
+              if (AudioCtx) this.ctx = new AudioCtx();
+            }
+            if (this.ctx && this.ctx.state === 'suspended') {
+              this.ctx.resume().catch(() => {});
+            }
+          }
+          toggleMute() {
+            this.isMuted = !this.isMuted;
+            localStorage.setItem(STORAGE_MUTED_KEY, this.isMuted ? 'true' : 'false');
+            return this.isMuted;
+          }
+          playTick(pitchRatio = 1) {
+            if (this.isMuted) return;
+            this.init();
+            if (!this.ctx) return;
+            try {
+              const t = this.ctx.currentTime;
+              const osc = this.ctx.createOscillator();
+              const gain = this.ctx.createGain();
+              const filter = this.ctx.createBiquadFilter();
+
+              osc.type = 'triangle';
+              osc.frequency.setValueAtTime(750 * pitchRatio, t);
+              osc.frequency.exponentialRampToValueAtTime(120, t + 0.04);
+
+              filter.type = 'bandpass';
+              filter.frequency.setValueAtTime(1100, t);
+              filter.Q.setValueAtTime(3.0, t);
+
+              gain.gain.setValueAtTime(0.35, t);
+              gain.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+
+              osc.connect(filter);
+              filter.connect(gain);
+              gain.connect(this.ctx.destination);
+
+              osc.start(t);
+              osc.stop(t + 0.045);
+            } catch (e) {}
+          }
+          playFanfare() {
+            if (this.isMuted) return;
+            this.init();
+            if (!this.ctx) return;
+            try {
+              const notes = [
+                { f: 523.25, time: 0.00, dur: 0.14 },
+                { f: 659.25, time: 0.12, dur: 0.14 },
+                { f: 783.99, time: 0.24, dur: 0.18 },
+                { f: 1046.50, time: 0.40, dur: 0.65 }
+              ];
+              notes.forEach(n => {
+                const t = this.ctx.currentTime + n.time;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(n.f, t);
+
+                gain.gain.setValueAtTime(0.0, t);
+                gain.gain.linearRampToValueAtTime(0.28, t + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.001, t + n.dur);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(t);
+                osc.stop(t + n.dur + 0.05);
+              });
+            } catch (e) {}
+          }
+        }
+        const sfx = new WebAudioSFX();
+
+        // --- 3. Business Hours Analyzer ---
+        function getBusinessStatus(restaurant) {
+          const now = new Date();
+          const day = now.getDay();
+          const timeVal = now.getHours() * 60 + now.getMinutes();
+
+          if (!restaurant.opening_hours.days.includes(day)) {
+            return {
+              isOpen: false,
+              text: '今日公休',
+              className: 'status-closed',
+              detail: restaurant.opening_hours.restDayNote || '本日公休未營業'
+            };
+          }
+
+          const parseT = (str) => {
+            const [h, m] = str.split(':').map(Number);
+            return h * 60 + m;
+          };
+
+          const { lunch, dinner } = restaurant.opening_hours;
+          let isOpen = false;
+
+          if (lunch && timeVal >= parseT(lunch.start) && timeVal <= parseT(lunch.end)) {
+            isOpen = true;
+          }
+          if (dinner && timeVal >= parseT(dinner.start) && timeVal <= parseT(dinner.end)) {
+            isOpen = true;
+          }
+
+          if (isOpen) {
+            return {
+              isOpen: true,
+              text: '營業中',
+              className: 'status-open',
+              detail: `目前正常營業（晚餐 ${dinner.start} ~ ${dinner.end}）`
+            };
+          }
+
+          if (dinner && timeVal < parseT(dinner.start)) {
+            return {
+              isOpen: false,
+              text: '休息中',
+              className: 'status-rest',
+              detail: `預計今日 ${dinner.start} 開啟晚餐時段`
+            };
+          }
+
+          return {
+            isOpen: false,
+            text: '休息中',
+            className: 'status-closed',
+            detail: '今日營業已結束（明日正常營業）'
+          };
+        }
+
+        function getHoursSummary(restaurant) {
+          const dayNames = ['日', '一', '二', '三', '四', '五', '六'];
+          const openDays = restaurant.opening_hours.days.map(d => dayNames[d]).join('、');
+          const lunchStr = restaurant.opening_hours.lunch ? `午餐 ${restaurant.opening_hours.lunch.start}-${restaurant.opening_hours.lunch.end} · ` : '';
+          const dinnerStr = `晚餐 ${restaurant.opening_hours.dinner.start}-${restaurant.opening_hours.dinner.end}`;
+          return `週[${openDays}] · ${lunchStr}${dinnerStr}`;
+        }
+
+        // --- 4. Application State Management ---
+        let allRestaurants = (() => {
+          try {
+            const saved = localStorage.getItem(STORAGE_CUSTOM_KEY);
+            if (saved) {
+              return [...PRESET_MIAOLI_RESTAURANTS, ...JSON.parse(saved)];
+            }
+          } catch(e) {}
+          return [...PRESET_MIAOLI_RESTAURANTS];
+        })();
+
+        let disabledIds = (() => {
+          try {
+            const saved = localStorage.getItem(STORAGE_DISABLED_KEY);
+            if (saved) return new Set(JSON.parse(saved));
+          } catch(e) {}
+          return new Set();
+        })();
+
+        let spinHistory = (() => {
+          try {
+            const saved = localStorage.getItem(STORAGE_HISTORY_KEY);
+            if (saved) {
+              const sevenDaysAgo = Date.now() - 7 * 86400000;
+              return JSON.parse(saved).filter(i => i.timestamp >= sevenDaysAgo);
+            }
+          } catch(e) {}
+          return [];
+        })();
+
+        let selectedCategory = '全部';
+        let openNowOnly = false;
+        let avoidRecent = false;
+        let isSpinning = false;
+        let currentRotation = 0;
+        let currentActiveWinner = null;
+
+        // Elements
+        const canvas = document.getElementById('wheelCanvas');
+        const ctx = canvas.getContext('2d');
+        const pointerEl = document.getElementById('wheelPointer');
+        const spinBtn = document.getElementById('spinBtn');
+        const quickPickBtn = document.getElementById('quickPickBtn');
+        const categoryPillsEl = document.getElementById('categoryPills');
+        const openNowFilterBtn = document.getElementById('openNowFilterBtn');
+        const antiRepeatFilterBtn = document.getElementById('antiRepeatFilterBtn');
+        const matchCountNum = document.getElementById('matchCountNum');
+        const totalCountNum = document.getElementById('totalCountNum');
+        const rosterListContainer = document.getElementById('rosterListContainer');
+        const activeCountBadge = document.getElementById('activeCountBadge');
+
+        // Modal Elements
+        const resultModalBackdrop = document.getElementById('resultModalBackdrop');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const modalBottomCloseBtn = document.getElementById('modalBottomCloseBtn');
+        const modalHeroBanner = document.getElementById('modalHeroBanner');
+        const modalKickerText = document.getElementById('modalKickerText');
+        const modalCategoryBadge = document.getElementById('modalCategoryBadge');
+        const modalRestaurantName = document.getElementById('modalRestaurantName');
+        const modalRatingText = document.getElementById('modalRatingText');
+        const modalStatusBadge = document.getElementById('modalStatusBadge');
+        const modalAlertBox = document.getElementById('modalAlertBox');
+        const modalDescription = document.getElementById('modalDescription');
+        const modalDishesContainer = document.getElementById('modalDishesContainer');
+        const modalAddressText = document.getElementById('modalAddressText');
+        const modalPhoneLink = document.getElementById('modalPhoneLink');
+        const modalHoursText = document.getElementById('modalHoursText');
+        const modalNavBtn = document.getElementById('modalNavBtn');
+        const modalSpinAgainBtn = document.getElementById('modalSpinAgainBtn');
+        const modalRecordBtn = document.getElementById('modalRecordBtn');
+        const modalRecordText = document.getElementById('modalRecordText');
+
+        // Drawers
+        const poolDrawerBackdrop = document.getElementById('poolDrawerBackdrop');
+        const openPoolBtn = document.getElementById('openPoolBtn');
+        const editPoolLinkBtn = document.getElementById('editPoolLinkBtn');
+        const closePoolDrawerBtn = document.getElementById('closePoolDrawerBtn');
+        const poolListContainer = document.getElementById('poolListContainer');
+        const resetDefaultsBtn = document.getElementById('resetDefaultsBtn');
+        const openAddModalBtn = document.getElementById('openAddModalBtn');
+
+        const historyDrawerBackdrop = document.getElementById('historyDrawerBackdrop');
+        const historyBtn = document.getElementById('historyBtn');
+        const closeHistoryDrawerBtn = document.getElementById('closeHistoryDrawerBtn');
+        const historyListContainer = document.getElementById('historyListContainer');
+        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+
+        const addModalBackdrop = document.getElementById('addModalBackdrop');
+        const closeAddModalBtn = document.getElementById('closeAddModalBtn');
+        const cancelAddModalBtn = document.getElementById('cancelAddModalBtn');
+        const addRestaurantForm = document.getElementById('addRestaurantForm');
+
+        // Audio controls
+        const soundToggleBtn = document.getElementById('soundToggleBtn');
+        const soundOnIcon = document.getElementById('soundOnIcon');
+        const soundOffIcon = document.getElementById('soundOffIcon');
+
+        function updateSoundUI() {
+          if (sfx.isMuted) {
+            soundToggleBtn.classList.remove('active');
+            soundOnIcon.style.display = 'none';
+            soundOffIcon.style.display = 'block';
+          } else {
+            soundToggleBtn.classList.add('active');
+            soundOnIcon.style.display = 'block';
+            soundOffIcon.style.display = 'none';
+          }
+        }
+        updateSoundUI();
+        soundToggleBtn.addEventListener('click', () => {
+          sfx.toggleMute();
+          updateSoundUI();
+        });
+
+        // --- 5. Candidate Pool Calculation ---
+        function getCandidates() {
+          let pool = allRestaurants.filter(r => !disabledIds.has(r.id));
+          if (selectedCategory !== '全部') {
+            pool = pool.filter(r => r.category.includes(selectedCategory));
+          }
+          if (openNowOnly) {
+            pool = pool.filter(r => getBusinessStatus(r).isOpen);
+          }
+          if (avoidRecent && spinHistory.length > 0) {
+            const recentIds = new Set(spinHistory.map(h => h.restaurantId));
+            const filtered = pool.filter(r => !recentIds.has(r.id));
+            if (filtered.length > 0) pool = filtered;
+          }
+          return pool;
+        }
+
+        // --- 6. Wheel Canvas Drawing ---
+        function drawWheel() {
+          const candidates = getCandidates();
+          const count = candidates.length;
+          const width = 800;
+          const height = 800;
+          const centerX = width / 2;
+          const centerY = height / 2;
+          const radius = 370;
+
+          ctx.clearRect(0, 0, width, height);
+
+          if (count === 0) {
+            ctx.fillStyle = '#1c1917';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.fillStyle = '#a1a1aa';
+            ctx.font = 'bold 26px "Noto Sans TC", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('請至少啟用 1 間餐廳', centerX, centerY);
+            return;
+          }
+
+          const sliceAngle = (2 * Math.PI) / count;
+
+          // Outer shadow & rim
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, radius + 14, 0, 2 * Math.PI);
+          ctx.fillStyle = '#1f1d18';
+          ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+          ctx.shadowBlur = 24;
+          ctx.fill();
+          ctx.restore();
+
+          // Slices
+          for (let i = 0; i < count; i++) {
+            const r = candidates[i];
+            const startA = i * sliceAngle;
+            const endA = (i + 1) * sliceAngle;
+
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, radius, startA, endA);
+            ctx.closePath();
+            ctx.fillStyle = r.color || '#E11D48';
+            ctx.fill();
+
+            // Gradient depth
+            const sliceGrad = ctx.createRadialGradient(centerX, centerY, 80, centerX, centerY, radius);
+            sliceGrad.addColorStop(0, 'rgba(255, 255, 255, 0.22)');
+            sliceGrad.addColorStop(0.7, 'rgba(255, 255, 255, 0.04)');
+            sliceGrad.addColorStop(1, 'rgba(0, 0, 0, 0.35)');
+            ctx.fillStyle = sliceGrad;
+            ctx.fill();
+
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+
+            // Text
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(startA + sliceAngle / 2);
+
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#FFFFFF';
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+            ctx.shadowBlur = 6;
+            ctx.shadowOffsetX = 1;
+            ctx.shadowOffsetY = 1;
+
+            const fontSize = count > 12 ? 18 : count > 8 ? 20 : 23;
+            ctx.font = `700 ${fontSize}px "Noto Sans TC", "Plus Jakarta Sans", sans-serif`;
+
+            let dName = r.name;
+            if (count > 8 && dName.length > 7) dName = dName.slice(0, 6) + '…';
+            else if (dName.length > 10) dName = dName.slice(0, 9) + '…';
+
+            ctx.fillText(dName, radius - 35, 0);
+
+            if (count <= 10) {
+              ctx.font = '500 13px "Noto Sans TC", sans-serif';
+              ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+              ctx.fillText(`★ ${r.rating.toFixed(1)}`, radius - 35, 24);
+            }
+            ctx.restore();
+          }
+
+          // Outer Carnival Bulbs
+          const pegCount = Math.max(count * 2, 24);
+          for (let p = 0; p < pegCount; p++) {
+            const pAngle = (p * 2 * Math.PI) / pegCount;
+            const px = centerX + Math.cos(pAngle) * (radius + 6);
+            const py = centerY + Math.sin(pAngle) * (radius + 6);
+
+            ctx.beginPath();
+            ctx.arc(px, py, 4.5, 0, 2 * Math.PI);
+            ctx.fillStyle = '#FEF08A';
+            ctx.shadowColor = '#F59E0B';
+            ctx.shadowBlur = 6;
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(px - 1, py - 1, 1.5, 0, 2 * Math.PI);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fill();
+          }
+
+          // Inner ring
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, 88, 0, 2 * Math.PI);
+          ctx.fillStyle = '#1c1917';
+          ctx.fill();
+          ctx.strokeStyle = '#f59e0b';
+          ctx.lineWidth = 4;
+          ctx.stroke();
+        }
+
+        // --- 7. Wheel Spin Animation Engine ---
+        function triggerSpin(targetIdx) {
+          const candidates = getCandidates();
+          if (isSpinning || candidates.length === 0) return;
+
+          isSpinning = true;
+          spinBtn.disabled = true;
+          quickPickBtn.disabled = true;
+
+          const count = candidates.length;
+          const sliceDeg = 360 / count;
+
+          const chosenIndex = (targetIdx !== undefined && targetIdx >= 0)
+            ? targetIdx
+            : Math.floor(Math.random() * count);
+
+          const midpoint = chosenIndex * sliceDeg + sliceDeg / 2;
+          let targetOffset = (270 - midpoint) % 360;
+          if (targetOffset < 0) targetOffset += 360;
+
+          // Organic jitter within sector
+          const jitter = (Math.random() - 0.5) * 2 * (sliceDeg * 0.25);
+          targetOffset = (targetOffset + jitter + 360) % 360;
+
+          const baseRotations = 360 * 5;
+          const currentDeg = currentRotation;
+          const currentNormalized = currentDeg % 360;
+          let diff = targetOffset - currentNormalized;
+          if (diff < 0) diff += 360;
+
+          const totalDeg = baseRotations + diff;
+          const startR = currentDeg;
+          const duration = 3500;
+          const startTime = performance.now();
+          let lastCrossed = -1;
+
+          const easeOut = (t) => 1 - Math.pow(1 - t, 3.5);
+
+          function step(now) {
+            const elapsed = now - startTime;
+            const progress = Math.min(1, elapsed / duration);
+            const eased = easeOut(progress);
+
+            const deg = startR + totalDeg * eased;
+            currentRotation = deg;
+            canvas.style.transform = `rotate(${deg}deg)`;
+
+            const pointerNorm = (270 - (deg % 360) + 360) % 360;
+            const curSlice = Math.floor(pointerNorm / sliceDeg);
+
+            if (curSlice !== lastCrossed) {
+              lastCrossed = curSlice;
+              sfx.playTick(Math.max(0.6, 1 - progress * 0.4));
+              pointerEl.classList.add('flap');
+              setTimeout(() => pointerEl.classList.remove('flap'), 50);
+            }
+
+            if (progress < 1) {
+              requestAnimationFrame(step);
+            } else {
+              isSpinning = false;
+              spinBtn.disabled = false;
+              quickPickBtn.disabled = false;
+              sfx.playFanfare();
+              openModal(candidates[chosenIndex], true);
+            }
+          }
+
+          requestAnimationFrame(step);
+        }
+
+        // --- 8. Modal Management ---
+        function openModal(restaurant, isWinner) {
+          currentActiveWinner = restaurant;
+          const status = getBusinessStatus(restaurant);
+
+          modalKickerText.textContent = isWinner ? '苗栗今晚首選出爐' : '店家詳細介紹';
+          modalCategoryBadge.textContent = restaurant.category;
+          modalRestaurantName.textContent = restaurant.name;
+          modalRatingText.textContent = `★ ${restaurant.rating.toFixed(1)}`;
+
+          modalStatusBadge.textContent = status.text;
+          modalStatusBadge.className = `status-pill ${status.className}`;
+
+          modalHeroBanner.style.backgroundColor = restaurant.color || '#E11D48';
+          modalHeroBanner.style.backgroundImage = `linear-gradient(135deg, ${restaurant.color || '#E11D48'} 0%, #18181b 100%)`;
+
+          if (!status.isOpen) {
+            modalAlertBox.style.display = 'block';
+            modalAlertBox.textContent = `${status.detail}，出發前建議先致電確認喔！`;
+          } else {
+            modalAlertBox.style.display = 'none';
+          }
+
+          modalDescription.textContent = restaurant.description;
+
+          // Dishes
+          modalDishesContainer.innerHTML = '';
+          (restaurant.signatureDishes || []).forEach(d => {
+            const span = document.createElement('span');
+            span.className = 'dish-tag';
+            span.textContent = d;
+            modalDishesContainer.appendChild(span);
+          });
+
+          // Address, Phone, Hours
+          modalAddressText.textContent = restaurant.address;
+          modalPhoneLink.textContent = restaurant.phone;
+          modalPhoneLink.href = `tel:${restaurant.phone.replace(/\\s+/g, '')}`;
+          modalHoursText.textContent = getHoursSummary(restaurant);
+
+          // Nav URL
+          const navUrl = restaurant.map_url.includes('cid=')
+            ? restaurant.map_url
+            : `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(restaurant.name + ' ' + restaurant.address)}`;
+          modalNavBtn.href = navUrl;
+
+          // Record status
+          const isRecorded = spinHistory.some(h => h.restaurantId === restaurant.id);
+          modalRecordText.textContent = isRecorded ? '已記錄今晚' : '決定吃這家';
+
+          resultModalBackdrop.classList.add('show');
+        }
+
+        function closeModal() {
+          resultModalBackdrop.classList.remove('show');
+          currentActiveWinner = null;
+        }
+
+        // Multiple ways to close modal reliably
+        closeModalBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          closeModal();
+        });
+        modalBottomCloseBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          closeModal();
+        });
+        resultModalBackdrop.addEventListener('click', (e) => {
+          if (e.target === resultModalBackdrop) {
+            closeModal();
+          }
+        });
+        document.getElementById('resultModalBox').addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
+
+        // Modal Action: Record history
+        modalRecordBtn.addEventListener('click', () => {
+          if (!currentActiveWinner) return;
+          const now = new Date();
+          const dStr = `${now.getMonth() + 1}/${now.getDate()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+          const item = {
+            id: `spin_${Date.now()}`,
+            restaurantId: currentActiveWinner.id,
+            restaurantName: currentActiveWinner.name,
+            category: currentActiveWinner.category,
+            rating: currentActiveWinner.rating,
+            timestamp: Date.now(),
+            dateString: dStr
+          };
+          spinHistory = [item, ...spinHistory.filter(h => h.restaurantId !== currentActiveWinner.id)].slice(0, 30);
+          localStorage.setItem(STORAGE_HISTORY_KEY, JSON.stringify(spinHistory));
+          modalRecordText.textContent = '已記錄今晚';
+          renderHistoryList();
+          updateUI();
+        });
+
+        // Modal Action: Spin again
+        modalSpinAgainBtn.addEventListener('click', () => {
+          closeModal();
+          setTimeout(() => {
+            const candidates = getCandidates();
+            if (candidates.length > 0) {
+              triggerSpin();
+            }
+          }, 150);
+        });
+
+        // Global ESC key listener to exit any modal or drawer
+        window.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            closeModal();
+            poolDrawerBackdrop.classList.remove('show');
+            historyDrawerBackdrop.classList.remove('show');
+            addModalBackdrop.classList.remove('show');
+          }
+        });
+
+        // --- 9. Roster & Category UI Renderers ---
+        function renderCategories() {
+          categoryPillsEl.innerHTML = '';
+          CATEGORIES.forEach(cat => {
+            const btn = document.createElement('button');
+            btn.className = `cat-btn ${selectedCategory === cat ? 'active' : ''}`;
+            btn.textContent = cat;
+            btn.addEventListener('click', () => {
+              selectedCategory = cat;
+              renderCategories();
+              updateUI();
+            });
+            categoryPillsEl.appendChild(btn);
+          });
+        }
+
+        function renderRoster() {
+          const candidates = getCandidates();
+          rosterListContainer.innerHTML = '';
+
+          if (candidates.length === 0) {
+            rosterListContainer.innerHTML = '<div style="text-align: center; color: #71717a; padding: 2rem 0; font-size: 0.8rem;">無符合條件的餐廳</div>';
+            return;
+          }
+
+          candidates.forEach(r => {
+            const status = getBusinessStatus(r);
+            const item = document.createElement('div');
+            item.className = 'roster-item';
+            item.innerHTML = `
+              <div style="display: flex; align-items: center; gap: 0.6rem; flex: 1; min-width: 0;">
+                <span class="item-dot" style="background-color: ${r.color || '#E11D48'};"></span>
+                <div class="item-info">
+                  <div class="item-name">${r.name}</div>
+                  <div class="item-meta">
+                    <span>${r.category}</span>
+                    <span>·</span>
+                    <span style="color: #f59e0b; font-weight: bold; font-family: monospace;">★ ${r.rating.toFixed(1)}</span>
+                    <span>·</span>
+                    <span class="status-pill ${status.className}">${status.text}</span>
+                  </div>
+                </div>
+              </div>
+              <div style="font-size: 0.72rem; color: #a1a1aa; flex-shrink: 0;">詳情 →</div>
+            `;
+            item.addEventListener('click', () => {
+              openModal(r, false);
+            });
+            rosterListContainer.appendChild(item);
+          });
+        }
+
+        function renderPoolDrawer() {
+          poolListContainer.innerHTML = '';
+          allRestaurants.forEach(r => {
+            const isEnabled = !disabledIds.has(r.id);
+            const status = getBusinessStatus(r);
+
+            const div = document.createElement('div');
+            div.style.cssText = `
+              background: #1f1d18;
+              border: 1px solid rgba(255,255,255,0.06);
+              border-radius: 0.75rem;
+              padding: 0.65rem 0.75rem;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              gap: 0.65rem;
+              opacity: ${isEnabled ? '1' : '0.5'};
+            `;
+
+            div.innerHTML = `
+              <div style="display: flex; align-items: center; gap: 0.65rem; flex: 1; min-width: 0;">
+                <input type="checkbox" ${isEnabled ? 'checked' : ''} style="width: 1.1rem; height: 1.1rem; accent-color: #f59e0b; cursor: pointer;" />
+                <div style="flex: 1; min-width: 0; cursor: pointer;">
+                  <div style="font-size: 0.85rem; font-weight: bold; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    ${r.name} ${r.isCustom ? '<span style="font-size: 0.65rem; background: rgba(245,158,11,0.2); color: #fbbf24; padding: 0.1rem 0.35rem; border-radius: 4px;">自訂</span>' : ''}
+                  </div>
+                  <div style="font-size: 0.7rem; color: #a1a1aa; display: flex; align-items: center; gap: 0.35rem; margin-top: 2px;">
+                    <span>${r.category}</span>
+                    <span>·</span>
+                    <span style="color: #f59e0b; font-family: monospace;">★ ${r.rating.toFixed(1)}</span>
+                    <span>·</span>
+                    <span class="status-pill ${status.className}">${status.text}</span>
+                  </div>
+                </div>
+              </div>
+              ${r.isCustom ? '<button class="delete-btn" title="刪除自訂店家" style="color: #fb7185; padding: 0.35rem; cursor: pointer;">✕</button>' : ''}
+            `;
+
+            const chk = div.querySelector('input[type="checkbox"]');
+            chk.addEventListener('change', () => {
+              if (chk.checked) disabledIds.delete(r.id);
+              else disabledIds.add(r.id);
+              localStorage.setItem(STORAGE_DISABLED_KEY, JSON.stringify(Array.from(disabledIds)));
+              renderPoolDrawer();
+              updateUI();
+            });
+
+            const delBtn = div.querySelector('.delete-btn');
+            if (delBtn) {
+              delBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (confirm(`確定要刪除自訂店家「${r.name}」嗎？`)) {
+                  allRestaurants = allRestaurants.filter(item => item.id !== r.id);
+                  const customs = allRestaurants.filter(item => item.isCustom);
+                  localStorage.setItem(STORAGE_CUSTOM_KEY, JSON.stringify(customs));
+                  renderPoolDrawer();
+                  updateUI();
+                }
+              });
+            }
+
+            poolListContainer.appendChild(div);
+          });
+        }
+
+        function renderHistoryList() {
+          historyListContainer.innerHTML = '';
+          if (spinHistory.length === 0) {
+            historyListContainer.innerHTML = '<div style="text-align: center; color: #71717a; padding: 3rem 1rem; font-size: 0.8rem;">尚無抽獎紀錄</div>';
+            return;
+          }
+          spinHistory.forEach(h => {
+            const div = document.createElement('div');
+            div.style.cssText = 'background: #1f1d18; border: 1px solid rgba(255,255,255,0.06); border-radius: 0.75rem; padding: 0.65rem 0.75rem; display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;';
+            div.innerHTML = `
+              <div>
+                <div style="font-size: 0.85rem; font-weight: bold; color: #fff;">${h.restaurantName}</div>
+                <div style="font-size: 0.7rem; color: #a1a1aa; display: flex; gap: 0.35rem; margin-top: 2px;">
+                  <span>${h.dateString}</span>
+                  <span>·</span>
+                  <span>${h.category}</span>
+                  <span>·</span>
+                  <span style="color: #f59e0b; font-family: monospace;">★ ${h.rating.toFixed(1)}</span>
+                </div>
+              </div>
+              <button class="remove-hist-btn" style="color: #71717a; padding: 0.3rem;" title="移除此紀錄">✕</button>
+            `;
+            div.querySelector('.remove-hist-btn').addEventListener('click', () => {
+              spinHistory = spinHistory.filter(i => i.id !== h.id);
+              localStorage.setItem(STORAGE_HISTORY_KEY, JSON.stringify(spinHistory));
+              renderHistoryList();
+            });
+            historyListContainer.appendChild(div);
+          });
+        }
+
+        function updateUI() {
+          const candidates = getCandidates();
+          matchCountNum.textContent = candidates.length;
+          totalCountNum.textContent = allRestaurants.length;
+          activeCountBadge.textContent = candidates.length;
+
+          drawWheel();
+          renderRoster();
+        }
+
+        // --- 10. Filter Toggles ---
+        openNowFilterBtn.addEventListener('click', () => {
+          openNowOnly = !openNowOnly;
+          openNowFilterBtn.classList.toggle('active', openNowOnly);
+          updateUI();
+        });
+
+        antiRepeatFilterBtn.addEventListener('click', () => {
+          avoidRecent = !avoidRecent;
+          antiRepeatFilterBtn.classList.toggle('active-amber', avoidRecent);
+          updateUI();
+        });
+
+        // --- 11. Spin Buttons Trigger ---
+        spinBtn.addEventListener('click', () => triggerSpin());
+        quickPickBtn.addEventListener('click', () => {
+          const candidates = getCandidates();
+          if (candidates.length === 0 || isSpinning) return;
+          const randomIdx = Math.floor(Math.random() * candidates.length);
+          sfx.playFanfare();
+          openModal(candidates[randomIdx], true);
+        });
+
+        // --- 12. Drawers & Modals Interaction ---
+        openPoolBtn.addEventListener('click', () => {
+          renderPoolDrawer();
+          poolDrawerBackdrop.classList.add('show');
+        });
+        editPoolLinkBtn.addEventListener('click', () => {
+          renderPoolDrawer();
+          poolDrawerBackdrop.classList.add('show');
+        });
+        closePoolDrawerBtn.addEventListener('click', () => {
+          poolDrawerBackdrop.classList.remove('show');
+        });
+        poolDrawerBackdrop.addEventListener('click', (e) => {
+          if (e.target === poolDrawerBackdrop) poolDrawerBackdrop.classList.remove('show');
+        });
+
+        historyBtn.addEventListener('click', () => {
+          renderHistoryList();
+          historyDrawerBackdrop.classList.add('show');
+        });
+        closeHistoryDrawerBtn.addEventListener('click', () => {
+          historyDrawerBackdrop.classList.remove('show');
+        });
+        historyDrawerBackdrop.addEventListener('click', (e) => {
+          if (e.target === historyDrawerBackdrop) historyDrawerBackdrop.classList.remove('show');
+        });
+        clearHistoryBtn.addEventListener('click', () => {
+          if (confirm('確定清空近 7 天的所有抽獎紀錄嗎？')) {
+            spinHistory = [];
+            localStorage.removeItem(STORAGE_HISTORY_KEY);
+            renderHistoryList();
+          }
+        });
+
+        resetDefaultsBtn.addEventListener('click', () => {
+          if (confirm('確定要還原為系統預設 10 家名單並清除所有自訂項目嗎？')) {
+            allRestaurants = [...PRESET_MIAOLI_RESTAURANTS];
+            disabledIds.clear();
+            localStorage.removeItem(STORAGE_CUSTOM_KEY);
+            localStorage.removeItem(STORAGE_DISABLED_KEY);
+            renderPoolDrawer();
+            updateUI();
+          }
+        });
+
+        // Add Restaurant Modal
+        openAddModalBtn.addEventListener('click', () => {
+          addModalBackdrop.classList.add('show');
+        });
+        closeAddModalBtn.addEventListener('click', () => {
+          addModalBackdrop.classList.remove('show');
+        });
+        cancelAddModalBtn.addEventListener('click', () => {
+          addModalBackdrop.classList.remove('show');
+        });
+        addModalBackdrop.addEventListener('click', (e) => {
+          if (e.target === addModalBackdrop) addModalBackdrop.classList.remove('show');
+        });
+        document.getElementById('addModalBox').addEventListener('click', (e) => e.stopPropagation());
+
+        addRestaurantForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const name = document.getElementById('addNameInput').value.trim();
+          if (!name) return;
+
+          const category = document.getElementById('addCategorySelect').value;
+          const rating = parseFloat(document.getElementById('addRatingInput').value) || 4.5;
+          const address = document.getElementById('addAddressInput').value.trim() || '苗栗縣苗栗市';
+          const phone = document.getElementById('addPhoneInput').value.trim() || '未提供電話';
+          const dishes = document.getElementById('addDishesInput').value.trim();
+
+          const colors = ['#F59E0B', '#10B981', '#EC4899', '#8B5CF6', '#3B82F6', '#EF4444', '#14B8A6'];
+          const randColor = colors[Math.floor(Math.random() * colors.length)];
+
+          const newPlace = {
+            id: `custom_${Date.now()}`,
+            name,
+            category,
+            address,
+            phone,
+            rating,
+            map_url: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name + ' 苗栗市')}`,
+            opening_hours: {
+              days: [0, 1, 2, 3, 4, 5, 6],
+              dinner: { start: '17:00', end: '20:30' },
+              restDayNote: '每日營業'
+            },
+            description: '使用者私房珍藏苗栗口袋名單。',
+            signatureDishes: dishes ? dishes.split(/[,，、]/).map(s => s.trim()).filter(Boolean) : ['私房推薦料理'],
+            color: randColor,
+            isCustom: true
+          };
+
+          allRestaurants = [newPlace, ...allRestaurants];
+          const customs = allRestaurants.filter(r => r.isCustom);
+          localStorage.setItem(STORAGE_CUSTOM_KEY, JSON.stringify(customs));
+
+          addRestaurantForm.reset();
+          addModalBackdrop.classList.remove('show');
+          renderPoolDrawer();
+          updateUI();
+        });
+
+        // --- 13. Download Single HTML Feature ---
+        document.getElementById('downloadFileBtn').addEventListener('click', () => {
+          const htmlContent = '<!doctype html>\\n' + document.documentElement.outerHTML;
+          const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = '苗栗市晚餐大輪盤_MiaoliDinnerWheel.html';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        });
+
+        // Initial setup
+        renderCategories();
+        updateUI();
+      })();
+    </script>
+  
+
+</body></html>
